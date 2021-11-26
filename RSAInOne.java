@@ -1,5 +1,5 @@
 public class RSAInOne {
-  private static int computePrime(int minRange, int maxRange) {
+  private static int computePrime(int minRange, int maxRange, int alreadyComputedPrime) {
     boolean isPrime = false;
     int possiblePrime = 0;
 
@@ -8,6 +8,9 @@ public class RSAInOne {
 
       for (int i = 2; i <= (int) Math.sqrt(possiblePrime); i++) {
         if (possiblePrime % i == 0) {
+          isPrime = false;
+          break;
+        } else if (possiblePrime == alreadyComputedPrime) {
           isPrime = false;
           break;
         }
@@ -53,9 +56,7 @@ public class RSAInOne {
     int[] encriptedMessage = new int[message.length];
 
     for (int i = 0; i < message.length; i++) {
-      System.out.print("message[" + i + "]: " + message[i] + message[i] + "\n");
       encriptedMessage[i] = modularExponentiation(message[i], encriptionKey, n);
-      System.out.print("encrypted message[" + i + "]: " + encriptedMessage[i] + "\n");
     }
 
     return encriptedMessage;
@@ -75,17 +76,15 @@ public class RSAInOne {
     int[] decryptedMessage = new int[message.length];
 
     for (int i = 0; i < message.length; i++) {
-      System.out.print("message[" + i + "]: " + message[i] + "\n");
       decryptedMessage[i] = modularExponentiation(message[i], decryptionKey, n);
-      System.out.print("decrypted message[" + i + "]: " + decryptedMessage[i] + "\n");
     }
 
     return decryptedMessage;
   }
 
   public static void main(String[] args) {
-    int p = computePrime(5, 100);
-    int q = computePrime(5, 100);
+    int p = computePrime(5, 100, 0);
+    int q = computePrime(5, 100, p);
     int n = p * q;
     int phi = (p-1) * (q-1);
 
@@ -103,11 +102,12 @@ public class RSAInOne {
     for (int i : encriptedMessage) {
       System.out.print((char) i);
     }
+    System.out.println();
 
     int[] decryptedMessage = decryptMessage(encriptedMessage, decryptionKey, n);
     for (int i : decryptedMessage) {
       System.out.print((char) i);
     }
-
+    System.out.println();
   }
 }
